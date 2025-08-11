@@ -1,0 +1,3 @@
+pip install pyarrow
+pip install tqdm
+pip install psutil

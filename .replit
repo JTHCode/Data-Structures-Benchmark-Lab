@@ -3,6 +3,7 @@ modules = ["python-3.11"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["bazel", "cairo", "curl", "double-conversion", "ffmpeg-full", "freetype", "ghostscript", "giflib", "gitFull", "glibcLocales", "gobject-introspection", "grpc", "gtk3", "jsoncpp", "libjpeg_turbo", "nsync", "openssl", "pkg-config", "qhull", "snappy", "tcl", "tk", "which", "zlib"]
 
 [unitTest]
 language = "python3"
@@ -17,3 +18,33 @@ deploymentTarget = "cloudrun"
 [[ports]]
 localPort = 5900
 externalPort = 80
+
+[workflows]
+runButton = "Benchmarks"
+
+[[workflows.workflow]]
+name = "Internal Testing"
+mode = "sequential"
+author = 42927083
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 internal_tests.py"
+
+[[workflows.workflow]]
+name = "Benchmarks"
+mode = "sequential"
+author = 42927083
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 benchmarks.py"
+
+[[workflows.workflow]]
+name = "Data Analysis"
+mode = "sequential"
+author = 42927083
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 data_analysis.py"
