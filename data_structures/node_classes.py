@@ -169,3 +169,11 @@ class LATLeafNode:
 
   def add(self, key, value):
     self.data[key] = value
+
+
+class RadixTrieNode:
+  def __init__(self, key, value=None, children=None):
+    self.key = key
+    self.value = value
+    self.children = {}
+    

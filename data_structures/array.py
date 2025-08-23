@@ -42,10 +42,25 @@ class Array:
     for i, k in enumerate(self.keys):
       if k == start_key:
         start_index = i
+      elif not start_index and k > start_key:
+        start_index = i
       if k == end_key:
         end_index = i
+        break
+      elif k > end_key:
+        end_index = i - 1
         break
     if start_index is None or end_index is None:
       return None
     return self.values[start_index:end_index+1]
+  
+  def nth_largest_key(self, n):
+    if n <= 0 or n > len(self.keys):
+      return None
+    return self.keys[-n]
+  
+  def nth_smallest_key(self, n):
+    if n <= 0 or n > len(self.keys):
+      return None
+    return self.keys[n-1]
     

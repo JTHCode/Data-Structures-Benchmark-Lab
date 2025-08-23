@@ -1,4 +1,3 @@
-# /home/runner/workspace/data_structures/linked_list.py
 """
 Module for creating and modifying linked lists.
 """
@@ -13,8 +12,11 @@ class linkedList:
     def __init__(self, keys, values):
         self.head = None
         self.tail = None
+        keys, values = zip(*sorted(zip(keys, values)))
+        keys = list(keys)
+        values = list(values)
         for key, val in zip(keys, values):
-            self.add(key, val)
+            self.add_Tail(key, val)
 
     def search(self, key):
         """Return the value for key, or None if not found."""

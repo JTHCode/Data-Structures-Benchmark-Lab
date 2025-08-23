@@ -1,47 +1,64 @@
 from data_structures.LAT import LAT
+import random
 from data_structures.skip_list import SkipList
 from data_structures.hash_table import HashTable
 from data_structures.linked_list import linkedList
+from data_structures.radix_trie import RadixTrie
 import time
 import numpy as np
 
-keys = np.random.randint(1, 100_000, size=10_000)
-values = np.random.randint(1, 100_000, size=10_000)
+def time_func(func, *args, repeats=1):
+    start = time.perf_counter_ns()
+    for _ in range(repeats):
+        func(*args)
+    end = time.perf_counter_ns()
+    return (end - start) // repeats
 
+# -------------------------------
+# Prepare key/value data
+NUM_KEYS = 10_000
+INSERT_HITS = 200
+INSERT_MISSES = 50
 
-def creationTime(data_structure, data, *args):
-  start = time.perf_counter()
-  ds = data_structure(data['keys'], data['values'], *args)
-  end = time.perf_counter()
-  return {
-    'operation' : 'creation',
-    'data_structure': data_structure.__name__,
-    'data_size': len(data['keys']),
-    'time': end - start,
-  }
-  
+random.seed(42)
+keys = random.sample(range(1, 1_000_000), NUM_KEYS)
+values = [f"val_{k}" for k in keys]
 
-def searchTime(data_structure, data, *args):
-  ds = data_structure(data['keys'], data['values'], *args)
-  start = time.perf_counter()
-  for key in data['keys']:
-    ds.search(key)
-  end = time.perf_counter()
-  return {
-    'operation' : 'search',
-    'data_structure': data_structure.__name__,
-    'data_size': len(data['keys']),
-    'time': end - start,
-  }
+# Insert test keys: 200 hits, 50 misses
+insert_hit_keys = random.sample(keys, INSERT_HITS)
+insert_miss_keys = random.sample(range(1_000_001, 1_000_001 + INSERT_MISSES), INSERT_MISSES)
+insert_keys = insert_hit_keys + insert_miss_keys
+random.shuffle(insert_keys)
 
-print(creationTime(linkedList, {'keys': keys, 'values': values}))
+# -------------------------------
+# Initialize structures
+structures = {
+    "RadixTrie": RadixTrie(keys, values, radix=10),
+    "LinkedList": linkedList(keys, values),
+    "HashTable": HashTable(keys, values),
+}
 
-print('\n')
+# -------------------------------
+# Benchmark each structure
+print("\n=== Data Structure Performance Benchmark ===\n")
+for name, structure in structures.items():
+    print(f"--- {name} ---")
 
-print(searchTime(linkedList, {'keys': keys, 'values': values}))
+    # Search benchmark
+    search_time = time_func(lambda: [structure.search(k) for k in keys])
 
-test_ds = linkedList(keys, values)
-print(test_ds.search(1000))
+    # Insert benchmark
+    insert_time = time_func(lambda: [structure.add(k, f"insert_{k}") for k in insert_keys])
 
+    # getMinKey
+    min_time = time_func(structure.getMinKey)
 
+    # getMaxKey
+    max_time = time_func(structure.getMaxKey)
 
+    print(f"Search (10k keys):    {search_time / 1e6:.2f} ms")
+    print(f"Insert (250 keys):    {insert_time / 1e6:.2f} ms")
+    print(f"getMinKey():          {min_time} ns")
+    print(f"getMaxKey():          {max_time} ns\n")
+
+print("✅ Benchmark complete.\n")

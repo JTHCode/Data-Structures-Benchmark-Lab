@@ -1,3 +1,8 @@
-pip install pyarrow
-pip install tqdm
-pip install psutil
+numpy
+pandas
+tqdm
+psutil
+pyarrow
+fastparquet
+sortedcontainers
+matplotlib
